@@ -34,6 +34,8 @@ spec:
               value: {{ .Values.port | quote }}
             - name: RUST_LOG
               value: {{ .Values.logLevel | quote }}
+            - name:  WEBHOOK_TOKEN
+              value: {{ .Values.telegram.webHookToken | quote }}
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

@@ -14,17 +14,25 @@ async fn main() {
         .parse()
         .expect("PORT env variable value is not an integer");
 
+    let token: String = env::var("WEBHOOK_TOKEN")
+        .expect("WEBHOOK_TOKEN env variable is not set")
+        .parse()
+        .expect("WEBHOOK_TOKEN parse error");
+
     let addr = ([0, 0, 0, 0], port).into();
 
     let url = format!("https://api.acteek.de/tg/dice").parse().unwrap();
 
-    let listener = webhooks::axum(bot.clone(), webhooks::Options::new(addr, url))
+    let options = webhooks::Options::new(addr, url).secret_token(token);
+
+    let listener = webhooks::axum(bot.clone(),options)
         .await
         .expect("Couldn't setup webhook");
 
     teloxide::repl_with_listener(
         bot,
         |bot: Bot, msg: Message| async move {
+            log::info!("Receive msg {msg}");
             bot.send_dice(msg.chat.id).await?;
             Ok(())
         },
