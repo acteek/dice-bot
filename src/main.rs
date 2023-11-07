@@ -15,9 +15,7 @@ async fn main() {
         .expect("PORT env variable value is not an integer");
 
     let token: String = env::var("WEBHOOK_TOKEN")
-        .expect("WEBHOOK_TOKEN env variable is not set")
-        .parse()
-        .expect("WEBHOOK_TOKEN parse error");
+        .expect("WEBHOOK_TOKEN env variable is not set");
 
     let addr = ([0, 0, 0, 0], port).into();
 

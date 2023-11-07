@@ -4,7 +4,7 @@ port: 8080
 
 telegram:
   botToken: "my_awesome_token"
-  webHookToken: 75ad4342-0ed6-4be8-aff9-89361f7da53d
+  webHookToken: sGRStaqTe163yJ6PhYiKQitzogSMFg4WC
 
 image:
   name: registry.digitalocean.com/acteek/dice-bot
