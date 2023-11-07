@@ -29,7 +29,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: TELOXIDE_TOKEN
-              value: {{ .Values.telegram.token | quote }}
+              value: {{ .Values.telegram.botToken | quote }}
             - name: PORT
               value: {{ .Values.port | quote }}
             - name: RUST_LOG

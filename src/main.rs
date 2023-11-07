@@ -32,7 +32,8 @@ async fn main() {
     teloxide::repl_with_listener(
         bot,
         |bot: Bot, msg: Message| async move {
-            log::info!("Receive msg {msg}");
+            let chat_id = msg.chat.id;
+            log::info!("Receive msg from chatId: [{chat_id}]");
             bot.send_dice(msg.chat.id).await?;
             Ok(())
         },
