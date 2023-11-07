@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@main
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Log in to DO Container Registry
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Set outputs
+        id: vars
+        run: echo "image_tag=$GITHUB_REF_NAME-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Docker image build
+        run: |
+          docker build -t registry.digitalocean.com/acteek/dice-bot:${{ steps.vars.outputs.image_tag }} $GITHUB_WORKSPACE/.
+          docker push registry.digitalocean.com/acteek/dice-bot:${{ steps.vars.outputs.image_tag }}
+
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@main
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} # only needed if version is 'latest'
+        id: install
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
+      - name: Set outputs
+        id: vars
+        run: echo "image_tag=$GITHUB_REF_NAME-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Deploy to DigitalOcean Kubernetes
+        run: |
+          helm template $GITHUB_WORKSPACE/helm/. \
+          --namespace=stage \
+          --set image.tag=${{ steps.vars.outputs.image_tag }} \
+          --set telegram.token=${{secrets.BOT_TOKEN}}  | kubectl apply -f -
+      - name: Verify deployment
+        run: kubectl -n stage rollout status deployment/burger-termin

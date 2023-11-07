@@ -1,0 +1,18 @@
+replicas: 1
+logLevel: info
+port: 8080
+
+telegram:
+  token: "my_awesome_token"
+
+image:
+  name: registry.digitalocean.com/acteek/dice-bot
+  tag: main-7e7ec826
+
+resources:
+  limits:
+    cpu: '0.1'
+    memory: 64Mi
+  requests:
+    cpu: '0.1'
+    memory: 64Mi

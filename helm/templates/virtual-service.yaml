@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dice-bot
+spec:
+  hosts:
+    - "api.acteek.de"
+  gateways:
+    - default-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /tg/dice-bot
+      rewrite:
+        uri: "/"
+      route:
+        - destination:
+            port:
+              number: {{ .Values.port | int }}
+            host: {{.Chart.Name }}.{{ .Release.Namespace }}.svc.cluster.local
