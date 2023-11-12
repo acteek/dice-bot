@@ -17,4 +17,4 @@ spec:
         name: https
         protocol: HTTP
       hosts:
-        - "*.acteek.de"  
+        - "*.acteek.de"
