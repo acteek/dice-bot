@@ -34,7 +34,7 @@ async fn main() {
         bot,
         |bot: Bot, msg: Message| async move {
             let chat_id = msg.chat.id;
-            log::info!("Receive msg from chatId: [{chat_id}]");
+            log::info!("Receive msg from chatId: {chat_id}");
             bot.send_dice(msg.chat.id).await?;
             Ok(())
         },
