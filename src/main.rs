@@ -17,9 +17,12 @@ async fn main() {
     let token: String = env::var("WEBHOOK_TOKEN")
         .expect("WEBHOOK_TOKEN env variable is not set");
 
+    let host: String = env::var("WEBHOOK_HOST")
+        .expect("WEBHOOK_HOST env variable is not set");    
+
     let addr = ([0, 0, 0, 0], port).into();
 
-    let url = format!("https://api.acteek.de/tg/dice").parse().unwrap();
+    let url = format!("https://{host}").parse().unwrap();
 
     let options = webhooks::Options::new(addr, url).secret_token(token);
 
